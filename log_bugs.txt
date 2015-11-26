@@ -1,0 +1,10 @@
+  BUGS
+    * Não está funcionando o reenvio com TIMEOUT
+      * Tbm n está funcionando o reenvio com loop INFINITO
+    * É necessário criar um status que funcione
+      * Enviar e verificar se recebeu mesmo
+    * O código está bagunçado demais
+      * Precisa dividir o código em vários arquivos
+      * Precisa remover funções inúteis
+      * Diminuir a replicação do código
+    * É necessário verificar o status de um roteador antes de enviar a distancia

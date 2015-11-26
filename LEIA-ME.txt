@@ -1,0 +1,48 @@
+Roteador
+Desenvolvido por: Rafael Hengen Ribeiro
+
+Instruções de uso:
+* Compilação:
+  A compilação deve utilizar a flag -lpthread
+  Não é compatível com o padrão ANSI-C 89, ou seja, não compila com -ansi devido aos comentários no estilo C++ '//'
+
+  Exemplo de compilação: gcc server-udp.c -o server -lpthread -O2
+
+
+* Inicialização:
+  Para inicializar o roteador basta passar o identificador (ID) como parâmetro.
+  Exemplos:   ./server 1
+              ./server 2
+  Obs.: Os roteadores são enumerados de 1 a n, sendo 0 um roteador inválido
+
+
+* Utilização:
+  O comando help mostra este menu de ajuda.
+  O comando send envia uma mensagem para o roteador destino desejado
+  Formato: send <id> mensagem
+  Exemplos:   send 1 Olá!
+              send 2 Hello router!
+
+  As mensagens podem ter até 255 caracteres, incluindo espaços
+
+* Configuração
+  O programa lê um arquivo roteador.config para saber a configuração dos roteadores
+  Exemplo:
+    1 25001 127.0.0.1
+    2 25002 127.0.0.1
+    3 25003 127.0.0.1
+    4 25004 127.0.0.1
+    5 25005 127.0.0.1
+    6 25006 127.0.0.1
+  E um arquivo enlaces.config para conhecer os enlaces da rede, com cada linha contendo a origem, destino e o custo
+  Exemplo:
+    1       2      10
+    1       3      15
+    2       4      2
+    2       5      5
+    3       4      2
+    4       6      10
+    5       6      5
+
+* Constantes do programa
+  DEBUG é uma constante para depuração, quando for definida mostrará mensagens mais detalhadas
