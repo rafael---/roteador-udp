@@ -1,3 +1,0 @@
-  BUGS
-    * Não está funcionando o reenvio com TIMEOUT
-      * Tbm n está funcionando o reenvio com loop INFINITO
