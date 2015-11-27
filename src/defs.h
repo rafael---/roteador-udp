@@ -22,7 +22,8 @@
 #define INTERVALO   2 /* Intervalo entre envios de vetor-distancia, em segundos */
 #define OFFLINE     (4.0*INTERVALO) /* Se um vizinho não envia um vetor-distancia há 4*INTERVALO segundos, é considerado OFFLINE */
 #define TENTATIVAS  3 /* Tentativas de envio de uma mensagem */
-#define TIMEOUT     3 /* Tempo de expiração de uma confirmação, em segundos. Após esse tempo uma nova mensagem é enviada */
+#define TIMEOUT     5 /* Tempo de expiração de uma confirmação, em segundos. Após esse tempo uma nova mensagem é enviada */
+#define TAM_FILA    100
 
 /*
   Verifica qual é a menor distancia até um nodo
@@ -45,11 +46,13 @@ struct mensagem {
   char msg[255];
 };
 
-typedef struct _l
-{
-    struct mensagem msg;
-    struct _l *ant, *prox;
-} nodo;
+/* Fila (FIFO) de mensagens aguardando reenvio */
+typedef struct {
+    int n;
+    int inicio;
+    struct mensagem vet[TAM_FILA];
+    pthread_mutex_t lock;
+} Fila;
 
 /*
   Matriz de distancias
@@ -58,14 +61,6 @@ struct distancia {
   int distancia;
   int prox_salto;
 };
-
-/* Fila (FIFO) de mensagens aguardando reenvio */
-typedef struct
-{
-    nodo *inicio, *fim;
-    pthread_mutex_t lock; /* Mutex. Acesso à fila é exclusivo*/
-    int tam;
-} fila;
 
 /* Variáveis globais */
 int id; /* ID do roteador */
@@ -95,4 +90,4 @@ struct distancia dist[MAX_NODES+1];
 */
 int vetor_distancia[MAX_NODES+1][MAX_NODES+1];
 
-fila *fila_envio;
+Fila *fila_envio;

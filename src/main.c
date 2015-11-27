@@ -7,7 +7,7 @@ extern char ips[MAX_NODES+1][16];
 extern clock_t last_update[MAX_NODES+1];
 extern struct distancia dist[MAX_NODES+1];
 extern int vetor_distancia[MAX_NODES+1][MAX_NODES+1];
-extern fila *fila_envio;
+extern Fila *fila_envio;
 
 int main(int argc, char ** argv)
 {

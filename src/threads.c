@@ -1,7 +1,7 @@
 #include "func.h"
 
 extern int vizinho[MAX_NODES+1];
-extern fila *fila_envio;
+extern Fila *fila_envio;
 extern int id;
 extern int cod;
 
@@ -22,11 +22,32 @@ void * thread_send_state(void * v)  {
   }
 }
 
+void * confirmar(void * v) {
+  struct mensagem temp;
+  do  {
+    sleep(TIMEOUT);
+
+    pthread_mutex_lock(&fila_envio->lock);
+    if(!fila_vazia()) {
+      do {
+        temp = remover();
+      } while(!fila_vazia() && temp.type == 'S');
+      if(!fila_vazia())
+        send_msg(temp, next_hop(temp.destino), 'D', ++temp.tentativa);
+    }
+    pthread_mutex_unlock(&fila_envio->lock);
+  } while(!fila_vazia());
+
+  pthread_exit(NULL);
+  return NULL;
+}
+
 void * loop_rec(void * v){
   struct sockaddr_in si_me, si_other;
 
   int s, i , recv_len;
   socklen_t slen = sizeof(si_other);
+  pthread_t thread_confirmar;
 
   struct mensagem msg;
   struct mensagem reply;
@@ -88,6 +109,7 @@ void * loop_rec(void * v){
           int temp = msg.destino;
           msg.destino = msg.fonte;
           msg.fonte = temp;
+          printf("\b\b - Erro: Roteador %d OFFLINE\n",nh);
           send_msg(msg, next_hop(msg.destino), 'E', msg.tentativa);
         }
         else
@@ -97,6 +119,19 @@ void * loop_rec(void * v){
     else if(msg.type == 'C')  {
       if(msg.destino == id) {
         printf("\nConfirmação de entrega: pck: %d para %d\n",msg.cod,msg.fonte);
+
+        pthread_mutex_lock(&fila_envio->lock);
+        if(fila_envio->vet[fila_envio->inicio].cod == msg.cod)
+          remover();
+        else  {
+          int i = 0;
+          for(; i < TAM_FILA; i++)  {
+            if(fila_envio->vet[i].cod == msg.cod)  {
+              msg.type = 'S';
+            }
+          }
+        }
+        pthread_mutex_unlock(&fila_envio->lock);
       }
       else  {
         msg.saltos++;
@@ -107,14 +142,15 @@ void * loop_rec(void * v){
       if(msg.destino == id) {
         printf("\nErro ao tentar enviar msg %d para o destino %d\n",msg.cod, msg.fonte);
 
-        if(msg.tentativa < TENTATIVAS) {
+        if(msg.tentativa <= TENTATIVAS) {
           int temp = msg.destino;
           msg.destino = msg.fonte;
           msg.fonte = temp;
           msg.tentativa++;
           printf("Tentando novamente.\n");
 
-          send_msg(msg, next_hop(msg.destino), 'D', msg.tentativa);
+          inserir(msg);
+          pthread_create(&thread_confirmar, NULL, confirmar, NULL);
         }
         else  {
           printf("Mensagem perdida. Tentativas expiradas\n");

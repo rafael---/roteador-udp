@@ -1,63 +1,46 @@
-#include "func.h"
+#include "defs.h"
 
-extern fila *fila_envio;
+extern Fila *fila_envio;
 
-char vazia()  {
-  return (fila_envio->tam == 0);
+Fila * inicializar(){
+    Fila *f = (Fila*) malloc(sizeof(Fila));
+    f->n = 0;
+    f->inicio = 0;
+    pthread_mutex_init(&f->lock, NULL);
+    return f;
 }
 
-void adicionar(struct mensagem msg)
+void inserir(struct mensagem msg)
 {
-  nodo * novo = (nodo*) malloc(sizeof(nodo));
-  novo->msg = msg;
-  novo->prox = NULL;
-  if(fila_envio->fim)
-    fila_envio->fim->prox = novo;
-  fila_envio->fim = novo;
-  if(!fila_envio->inicio)
-    fila_envio->inicio = fila_envio->fim;
-  fila_envio->tam++;
-}
+    int fim;
 
-fila * inicializar ()
-{
-    fila * l =(fila*) malloc(sizeof(fila));
-    l->inicio = l->fim = NULL;
-    l->tam = 0;
-    pthread_mutex_init(&l->lock, NULL);
-    return l;
-}
+    pthread_mutex_lock(&fila_envio->lock);
 
-nodo * buscar(int msg_id)  {
-  nodo * p = fila_envio->inicio;
-  while(p != NULL && p->msg.cod != msg_id)
-		p = p->prox;
-  return p;
-}
-
-nodo * dequeue()  {
-    nodo * p = fila_envio->inicio;
-    if(p == NULL)
-        return NULL;
-
-    fila_envio->inicio = fila_envio->inicio->prox;
-
-    if(fila_envio->inicio == NULL) {
-        fila_envio->fim = NULL;
+    if(fila_envio->n == TAM_FILA){
+        printf("Fila de reenvio cheia!\n");
+        return;
     }
-    else  {
-        fila_envio->inicio->ant = NULL;
-     }
-    fila_envio->tam--;
 
-    return p;
+    fim = (fila_envio->inicio + fila_envio->n) % TAM_FILA;
+    fila_envio->vet[fim] = msg;
+    fila_envio->n++;
+
+    pthread_mutex_unlock(&fila_envio->lock);
 }
 
-void imprimir()
-{
-    nodo * p = fila_envio->inicio;
-    printf("\nElementos na fila de reenvio\n");
-    for(; p; p = p->prox)
-        printf("MSG-ID: %d\n",p->msg.cod);
-    putchar('\n');
+char fila_vazia(){
+    return (fila_envio->n == 0);
+}
+
+struct mensagem remover(){
+     struct mensagem ret;
+     ret.cod = -1;
+
+     if(!fila_vazia())  {
+       ret = fila_envio->vet[fila_envio->inicio];
+       fila_envio->inicio = (fila_envio->inicio+1) % TAM_FILA;
+       fila_envio->n--;
+     }
+
+     return ret;
 }

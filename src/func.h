@@ -30,10 +30,7 @@ void source(void); /* Thread que fica esperando um comando do usuário, send por
  int main(int argc, char ** argv); /* Função principal */
 
 /* - Arquivo - fila.c */
-void adicionar(struct mensagem ); /* Adiciona uma mensagem à fila de reenvio */
-fila * inicializar (); /* Inicializa uma fila */
-char vazia(); /* Verifica se a fila está vazia. */
-void remover(int msg_id); /* Remove da fila a mensagem com cod = msg_id */
-void imprimir(); /* Imprime os elementos na fila de reenvio */
-nodo * buscar(int msg_id); /* Buscar um nodo através do ID */
-nodo * dequeue(); /* Remove o elemento mais antigo da fila */
+void inserir(struct mensagem msg); /* Adiciona uma mensagem ao fim da fila de reenvio */
+Fila * inicializar(); /* Inicializa a fila  de reenvio */
+char fila_vazia(); /* Verifica se a fila está vazia. */
+struct mensagem remover(); /* Remove da fila a mensagem mais antiga */

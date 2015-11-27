@@ -93,7 +93,7 @@ void source()
 
     send_msg(msg, next_hop(i), 'D', 0);
 
-    adicionar(msg);
-    /* pthread_create(&confirmacao, NULL, confirmar, NULL); */
+    inserir(msg);
+    pthread_create(&confirmacao, NULL, confirmar, NULL);
   }
 }

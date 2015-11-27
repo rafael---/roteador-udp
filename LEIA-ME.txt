@@ -3,10 +3,11 @@ Desenvolvido por: Rafael Hengen Ribeiro
 
 Instruções de uso:
 * Compilação:
-  A é feita através de um Makefile. Basta ir ao diretório src/ e executar o comando make
+  A é feita através de um Makefile. Basta e executar o comando make
 
 
 * Inicialização:
+  É necessário entrar no diretório bin/.
   Para inicializar o roteador basta passar o identificador (ID) como parâmetro.
   Exemplos:   ./server 1
               ./server 2
@@ -15,13 +16,13 @@ Instruções de uso:
 
 * Utilização:
   O comando help mostra este menu de ajuda.
-  
+
   O comando status informa qual é o estado do roteador desejado.
-    Caso o roteador seja vizinho, ele mostrará os status ONLINE ou OFFLINE.
+    Caso o roteador seja vizinho, ele mostrará os status OK ou OFFLINE.
     Caso contrário, será mostrado o status DESCONHECIDO.
   Formato: status <id>
-  Exemplos:   status 2  
-    
+  Exemplos:   status 2
+
   O comando send envia uma mensagem para o roteador destino desejado
   Formato: send <id> mensagem
   Exemplos:   send 1 Olá!
@@ -53,14 +54,14 @@ Instruções de uso:
   DEBUG é uma constante para depuração, quando for definida mostrará mensagens mais detalhadas e status do sistema
   Exemplo: #define DEBUG 1
   INTERVALO é o intervalo de atualização dos roteadores, em segundos. O padrão é 1
-  TIMEOUT é o tempo de expiração de uma mensagem, após esse tempo a mensagem é reenviada caso não receba uma confirmação
+  TIMEOUT é o tempo de expiração de uma mensagem, após esse tempo a mensagem é reenviada caso não receba uma confirmação.
+    O TIMEOUT padrão é 5 segundos
   MAX é a distância máxima que um roteador pode ter de outro. O padrão é 15
   MAX_NODES é o número máximo de roteadores permitidos. O padrão é 7, mas pode ser alterado. Não é aconselhável utilizar um
-    número maior, pois o vetor-distância é enviado como char e tem o número máximo permitido 127. Logo, MAX*MAX_NODES deve ser 
+    número maior, pois o vetor-distância é enviado como char e tem o número máximo permitido 127. Logo, MAX*MAX_NODES deve ser
     menor que 127.
   TENTATIVAS é o número de tentativas de reenvio de uma mensagem. O padrão é 3
-  
+
 * Funcionamento do prococolo
   Os roteadores enviam periodicamente informações de seus vizinhos e seus respectivos custos para os outros vizinhos.
   Caso o roteador não envie informações por mais de 4 * INTERVALO segundos, ele é considerado OFFLINE
-  
