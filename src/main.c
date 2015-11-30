@@ -98,6 +98,11 @@ void add_enlaces(const char * fname)  {
 
 void help() {
   puts("O comando help mostra este menu de ajuda.");
+  puts("O comando status informa qual é o estado do roteador desejado.");
+  puts("\tCaso o roteador seja vizinho, ele mostrará os status OK ou OFFLINE.");
+  puts("\tCaso contrário, será mostrado o status DESCONHECIDO.");
+  puts("\t\tFormato: status <id>");
+  puts("\t\tExemplos:   status 2");
   puts("O comando send envia uma mensagem para o roteador destino desejado");
   puts("\tFormato: send <id> mensagem");
   puts("\tExemplos:\n\t\t\tsend 1 Olá!");
